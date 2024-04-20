@@ -16,8 +16,6 @@ Simple Terraform code to deploy a Flask application on an EC2 instance. The Flas
 - The code creates an EC2 instance and the security group to allow traffic on different ports, but the one we are interested in is port 5000 (Flask default port)
 - The `setup_flask.tpl` template configures the packages necessary to run the Flask application and the MySQL database. The database password is specified on the local machine as an environment variable and is then passed to the template. The final script is generated from the template and eventually is passed to the instance. Data entered on the web page is stored in the MySQL database.
 
-The setup_flask.tpl template configures the environment necessary to run the Flask application and the MySQL database. The database password, initially set as an environment variable on the local machine, is passed into the template. This enables the dynamic generation of the final script, which is subsequently transferred and executed on the instance.
-
 - `user_data` uses Remote File URLs to download the files from the remote repository. The files are then executed on the instance.
 - Specifically, files for the Flask application are loaded using the `curl` command. The files stored in the remote repository are downloaded to the instance. The Flask application is then started.
 
