@@ -47,6 +47,10 @@ resource "aws_security_group" "ter_gr" {
     }
 }
 
+# Adds the configuration data to the instance
+# specifiying the db password by adding it to the template.
+# db_password is specified on the local machine as an environment variable
+# and is then passed to the template, which is then rendered and passed to the instance.
 data "template_file" "init_script" {
     template = file("setup_flask.tpl")
 
@@ -61,10 +65,11 @@ resource "aws_instance" "app" {
     key_name      = "MainPersonal"
 
     root_block_device {
-        volume_size = 29
+        volume_size = 30
         volume_type = "gp3"
     }
 
+    # rendering the template and passing it to the instance
     user_data = data.template_file.init_script.rendered
 
     tags = {
