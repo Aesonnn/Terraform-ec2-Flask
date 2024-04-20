@@ -6,7 +6,6 @@ terraform {
     }
 }
 
-
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners = ["amazon"]
@@ -48,42 +47,25 @@ resource "aws_security_group" "ter_gr" {
     }
 }
 
+data "template_file" "init_script" {
+    template = file("setup_flask.tpl")
+
+    vars = {
+        db_password = var.db_password
+    }
+}
+
 resource "aws_instance" "app" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
     key_name      = "MainPersonal"
 
     root_block_device {
-        volume_size = 30 
+        volume_size = 29
         volume_type = "gp3"
     }
 
-    # Not really recommended to use this method
-    connection {
-        type        = "ssh"
-        user        = "ubuntu"
-        private_key = file("E:/Code/MainPersonal.pem")
-        host        = self.public_ip
-    }
-  
-    provisioner "file" {
-        source      = "E:/Code/TerraformFlask/app.py"
-        destination = "/home/ubuntu/app.py"
-    }
-
-    provisioner "file" {
-        source      = "E:/Code/TerraformFlask/templates"
-        destination = "/home/ubuntu/templates"
-    }
-
-    # Not recommended too
-    # provisioner "remote-exec" {
-    #     inline = [
-    #     "sudo apt update", 
-    #     ]
-    # }
-
-    user_data = local.user_data
+    user_data = data.template_file.init_script.rendered
 
     tags = {
         Name = "FlaskAppInstance"
@@ -91,5 +73,6 @@ resource "aws_instance" "app" {
     vpc_security_group_ids = [aws_security_group.ter_gr.id]
     security_groups = [aws_security_group.ter_gr.name]
 }
+
 
 
