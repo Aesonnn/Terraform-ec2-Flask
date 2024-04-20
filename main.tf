@@ -51,33 +51,35 @@ resource "aws_security_group" "ter_gr" {
 resource "aws_instance" "app" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
+    key_name      = "MainPersonal"
 
     root_block_device {
         volume_size = 30 
         volume_type = "gp3"
     }
 
-    # provisioner "file" {
-    #     source      = "E:/Code/TerraformFlask/app.py"
-    #     destination = "/home/ubuntu/app.py"
-    # }
+    # Not really recommended to use this method
+    connection {
+        type        = "ssh"
+        user        = "ubuntu"
+        private_key = file("E:/Code/MainPersonal.pem")
+        host        = self.public_ip
+    }
+  
+    provisioner "file" {
+        source      = "E:/Code/TerraformFlask/app.py"
+        destination = "/home/ubuntu/app.py"
+    }
 
-    # provisioner "file" {
-    #     source      = "E:/Code/TerraformFlask/templates"
-    #     destination = "/home/ubuntu/templates"
-    # }
+    provisioner "file" {
+        source      = "E:/Code/TerraformFlask/templates"
+        destination = "/home/ubuntu/templates"
+    }
 
-    # connection {
-    #     type        = "ssh"
-    #     user        = "ubuntu"
-    #     private_key = file("${var.private_key_path}")
-    #     host        = self.public_ip
-    # }
-
-    # Ensure the server is up before running provisioners
+    # Not recommended too
     # provisioner "remote-exec" {
     #     inline = [
-    #         "sudo systemctl restart flaskapp.service"
+    #     "sudo apt update", 
     #     ]
     # }
 
