@@ -21,4 +21,4 @@ Simple Terraform code to deploy a Flask application on an EC2 instance. The Flas
 
 ## Possible improvements
 
-- Using user_data with Remote File URLs to download file sto the instance is not a bad option. However, using a configuration management tool like Ansible is a much better approach which I will be implementing in the future.
+- Using user_data with Remote File URLs to download files to the instance is not a bad option. However, using a configuration management tool like Ansible is a much better approach which will be implemented in the future.
